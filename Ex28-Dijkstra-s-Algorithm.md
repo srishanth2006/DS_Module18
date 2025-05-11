@@ -1,115 +1,114 @@
-# Ex26 Prim’s Algorithm
+# Ex28 Dijkstra’s Algorithm
 ## DATE:11.5.25
 ## AIM:
-To write a C program to implement Prim's Algorithm for finding Total Cost of tree.
+To write a C Program to implement Dijkstra's Algorithm to find the shortest path
 
 ## Algorithm
 1. Start 
-2. Read the number of vertices n and the adjacency matrix G. 
-3. Initialize the cost, spanning, distance, from, and visited arrays. 
-4. Apply Prim’s algorithm to build the minimum spanning tree by selecting the vertex with the 
-minimum distance, updating the spanning tree, and updating the distance array. 
-5. Repeat the process until all edges are added to the spanning tree. 
-6. Print the spanning matrix and the total cost of the spanning tree. 
-7. End 
+2. Read the number of vertices n and the adjacency matrix G representing the graph. 
+3. Read the starting node u for Dijkstra's algorithm. 
+4. Create the cost matrix where each G[i][j] is copied, and replace 0 values with infinity 
+(except for the diagonal). 
+5. Initialize the distance, pred, and visited arrays. 
+6. For each node, find the one with the minimum distance that hasn't been visited. Update the 
+distances and predecessors of its unvisited neighbors. 
+7. Repeat the process until all nodes are visited. 
+8. After the algorithm completes, print the shortest distance from the start node to each node 
+and the path taken to reach each node. 
+9. End
 
 ## Program:
 ```
 /*
-Program to implement Prim's Algorithm
+Program to implement Dijkstra's Algorithm 
 Developed by: SRISHANTH J
 RegisterNumber:  212223240160
 */
 
 #include<stdio.h> 
-#include<stdlib.h> 
-#define infinity 9999 
-#define MAX 20 
-int G[MAX][MAX],spanning[MAX][MAX],n; 
-int prims(); 
+#define INFINITY 9999 
+#define MAX 10 
+void dijkstra(int G[MAX][MAX],int n,int startnode); 
 int main() 
 { 
-int i,j,total_cost; 
+int G[MAX][MAX],i,j,n,u; 
 scanf("%d",&n); 
 for(i=0;i<n;i++) 
 for(j=0;j<n;j++) 
 scanf("%d",&G[i][j]); 
-total_cost=prims(); 
- 
-for(i=0;i<n;i++) 
-{ 
-for(j=0;j<n;j++) 
-printf("%d ",spanning[i][j]); 
-printf("\n"); 
-  
-  
-} 
-printf("\nTotal cost of spanning tree=%d",total_cost); 
+scanf("%d",&u); 
+dijkstra(G,n,u); 
 return 0; 
 } 
- 
-int prims() 
+  
+  
+void dijkstra(int G[MAX][MAX],int n,int startnode) 
 { 
-int cost[MAX][MAX]; 
-int u,v,min_distance,distance[MAX],from[MAX]; 
-int visited[MAX],no_of_edges,i,min_cost,j; 
-//create cost[][] matrix,spanning[][] 
+ 
+int cost[MAX][MAX],distance[MAX],pred[MAX]; 
+int visited[MAX],count,mindistance,nextnode,i,j; 
+//pred[] stores the predecessor of each node 
+//count gives the number of nodes seen so far 
+//create the cost matrix 
 for(i=0;i<n;i++) 
 for(j=0;j<n;j++) 
-{ 
 if(G[i][j]==0) 
-cost[i][j]=infinity; 
+cost[i][j]=INFINITY; 
 else 
 cost[i][j]=G[i][j]; 
-spanning[i][j]=0; 
-} 
-//initialise visited[],distance[] and from[] 
-distance[0]=0; 
-visited[0]=1; 
-for(i=1;i<n;i++) 
+//initialize pred[],distance[] and visited[] 
+for(i=0;i<n;i++) 
 { 
-distance[i]=cost[0][i]; 
-from[i]=0; 
+distance[i]=cost[startnode][i]; 
+pred[i]=startnode; 
 visited[i]=0; 
 } 
-min_cost=0; //cost of spanning tree 
-no_of_edges=n-1; //no. of edges to be added 
-while(no_of_edges>0) 
+distance[startnode]=0; 
+visited[startnode]=1; 
+count=1; 
+while(count<n-1) 
 { 
-//find the vertex at minimum distance from the tree 
-min_distance=infinity; 
-for(i=1;i<n;i++) 
-if(visited[i]==0&&distance[i]<min_distance) 
+mindistance=INFINITY; 
+//nextnode gives the node at minimum distance 
+for(i=0;i<n;i++) 
+if(distance[i]<mindistance&&!visited[i]) 
 { 
-v=i; 
-min_distance=distance[i]; 
+mindistance=distance[i]; 
+nextnode=i; 
 } 
-u=from[v]; 
-//insert the edge in spanning tree 
-spanning[u][v]=distance[v]; 
-spanning[v][u]=distance[v]; 
-no_of_edges--; 
-visited[v]=1; 
-//updated the distance[] array 
+//check if a better path exists through nextnode 
+visited[nextnode]=1; 
+for(i=0;i<n;i++) 
+if(!visited[i]) 
+if(mindistance+cost[nextnode][i]<distance[i]) 
+{ 
+distance[i]=mindistance+cost[nextnode][i]; 
+pred[i]=nextnode; 
+} 
+count++; 
+} 
+ 
+//print the path and distance of each node 
   
   
-for(i=1;i<n;i++) 
-if(visited[i]==0&&cost[i][v]<distance[i]) 
+for(i=0;i<n;i++) 
+if(i!=startnode) 
 { 
-distance[i]=cost[i][v]; 
-from[i]=v; 
+printf("Distance of node%d=%d\n",i,distance[i]); 
+printf("Path=%d",i); 
+j=i; 
+do{ 
+j=pred[j]; 
+printf("<-%d",j); 
+}while(j!=startnode); 
 } 
-min_cost=min_cost+cost[u][v]; 
 } 
-return(min_cost); 
-}
 ```
 
 ## Output:
-
-![Screenshot 2025-05-11 153318](https://github.com/user-attachments/assets/b77a9ff8-b69e-4284-991e-f4b6dc6157a0)
+![Screenshot 2025-05-11 154016](https://github.com/user-attachments/assets/4b7de7be-6acb-41f7-bcd6-9b1ca05c8074)
 
 
 ## Result:
 
-Thus, the C program to implement Prim's Algorithm for finding Total Cost of tree is implemented successfully.
+Thus, the Program to implement Dijkstra's Algorithm to find the shortest path is implemented successfully.
